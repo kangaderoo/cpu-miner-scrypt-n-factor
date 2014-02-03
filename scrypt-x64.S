@@ -1067,13 +1067,112 @@ _scrypt_core_3way:
 #endif
 	
 scrypt_core_3way_avx:
-	scrypt_shuffle %rdi, 0, %rsp, 0
-	scrypt_shuffle %rdi, 64, %rsp, 64
-	scrypt_shuffle %rdi, 128, %rsp, 128
-	scrypt_shuffle %rdi, 192, %rsp, 192
-	scrypt_shuffle %rdi, 256, %rsp, 256
-	scrypt_shuffle %rdi, 320, %rsp, 320
-	
+	vmovdqa (%rdi),%xmm5
+	vmovdqa 0x10(%rdi),%xmm4
+	vmovdqa 0x20(%rdi),%xmm1
+	vmovdqa 0x30(%rdi),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,(%rsp)
+	vmovdqa %xmm3,0x10(%rsp)
+	vmovdqa %xmm2,0x20(%rsp)
+	vmovdqa %xmm0,0x30(%rsp)
+	vmovdqa 0x40(%rdi),%xmm5
+	vmovdqa 0x50(%rdi),%xmm4
+	vmovdqa 0x60(%rdi),%xmm1
+	vmovdqa 0x70(%rdi),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x40(%rsp)
+	vmovdqa %xmm3,0x50(%rsp)
+	vmovdqa %xmm2,0x60(%rsp)
+	vmovdqa %xmm0,0x70(%rsp)
+
+	vmovdqa 0x80(%rdi),%xmm5
+	vmovdqa 0x90(%rdi),%xmm4
+	vmovdqa 0xa0(%rdi),%xmm1
+	vmovdqa 0xb0(%rdi),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x80(%rsp)
+	vmovdqa %xmm3,0x90(%rsp)
+	vmovdqa %xmm2,0xa0(%rsp)
+	vmovdqa %xmm0,0xb0(%rsp)
+	vmovdqa 0xc0(%rdi),%xmm5
+	vmovdqa 0xd0(%rdi),%xmm4
+	vmovdqa 0xe0(%rdi),%xmm1
+	vmovdqa 0xf0(%rdi),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0xc0(%rsp)
+	vmovdqa %xmm3,0xd0(%rsp)
+	vmovdqa %xmm2,0xe0(%rsp)
+	vmovdqa %xmm0,0xf0(%rsp)
+
+	vmovdqa 0x100(%rdi),%xmm5
+	vmovdqa 0x110(%rdi),%xmm4
+	vmovdqa 0x120(%rdi),%xmm1
+	vmovdqa 0x130(%rdi),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x100(%rsp)
+	vmovdqa %xmm3,0x110(%rsp)
+	vmovdqa %xmm2,0x120(%rsp)
+	vmovdqa %xmm0,0x130(%rsp)
+	vmovdqa 0x140(%rdi),%xmm5
+	vmovdqa 0x150(%rdi),%xmm4
+	vmovdqa 0x160(%rdi),%xmm1
+	vmovdqa 0x170(%rdi),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x140(%rsp)
+	vmovdqa %xmm3,0x150(%rsp)
+	vmovdqa %xmm2,0x160(%rsp)
+	vmovdqa %xmm0,0x170(%rsp)
+
+//	scrypt_shuffle %rdi, 0, %rsp, 0
+//	scrypt_shuffle %rdi, 64, %rsp, 64
+//	scrypt_shuffle %rdi, 128, %rsp, 128
+//	scrypt_shuffle %rdi, 192, %rsp, 192
+//	scrypt_shuffle %rdi, 256, %rsp, 256
+//	scrypt_shuffle %rdi, 320, %rsp, 320
+
 	movdqa	64(%rsp), %xmm0
 	movdqa	80(%rsp), %xmm1
 	movdqa	96(%rsp), %xmm2
@@ -1349,13 +1448,116 @@ scrypt_core_3way_avx_loop2:
 	
 	subq	$1, %rcx
 	ja scrypt_core_3way_avx_loop2
+
+// x040 (%rsp) is already in %xmm0, move to %xmm5 seems double
+	vmovdqa 0x40(%rsp),%xmm5
+	vmovdqa 0x50(%rsp),%xmm4
+	vmovdqa 0x60(%rsp),%xmm1
+	vmovdqa 0x70(%rsp),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x40(%rdi)
+	vmovdqa %xmm3,0x50(%rdi)
+	vmovdqa %xmm2,0x60(%rdi)
+	vmovdqa %xmm0,0x70(%rdi)
+
+	vmovdqa (%rsp),%xmm5
+	vmovdqa 0x10(%rsp),%xmm4
+	vmovdqa 0x20(%rsp),%xmm1
+	vmovdqa 0x30(%rsp),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,(%rdi)
+	vmovdqa %xmm3,0x10(%rdi)
+	vmovdqa %xmm2,0x20(%rdi)
+	vmovdqa %xmm0,0x30(%rdi)
+
+
+	vmovdqa 0x80(%rsp),%xmm5
+	vmovdqa 0x90(%rsp),%xmm4
+	vmovdqa 0xa0(%rsp),%xmm1
+	vmovdqa 0xb0(%rsp),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x80(%rdi)
+	vmovdqa %xmm3,0x90(%rdi)
+	vmovdqa %xmm2,0xa0(%rdi)
+	vmovdqa %xmm0,0xb0(%rdi)
+
+	vmovdqa 0xc0(%rsp),%xmm5
+	vmovdqa 0xd0(%rsp),%xmm4
+	vmovdqa 0xe0(%rsp),%xmm1
+	vmovdqa 0xf0(%rsp),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0xc0(%rdi)
+	vmovdqa %xmm3,0xd0(%rdi)
+	vmovdqa %xmm2,0xe0(%rdi)
+	vmovdqa %xmm0,0xf0(%rdi)
+
+	vmovdqa 0x100(%rsp),%xmm5
+	vmovdqa 0x110(%rsp),%xmm4
+	vmovdqa 0x120(%rsp),%xmm1
+	vmovdqa 0x130(%rsp),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x100(%rdi)
+	vmovdqa %xmm3,0x110(%rdi)
+	vmovdqa %xmm2,0x120(%rdi)
+	vmovdqa %xmm0,0x130(%rdi)
+	vmovdqa 0x140(%rsp),%xmm5
+	vmovdqa 0x150(%rsp),%xmm4
+	vmovdqa 0x160(%rsp),%xmm1
+	vmovdqa 0x170(%rsp),%xmm0
+	vpblendw $0xf0,%xmm1,%xmm5,%xmm3
+	vpblendw $0xf0,%xmm5,%xmm1,%xmm1
+	vpblendw $0xf,%xmm0,%xmm4,%xmm2
+	vpblendw $0xf,%xmm4,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm0,%xmm3,%xmm4
+	vpblendw $0xcc,%xmm3,%xmm2,%xmm3
+	vpblendw $0xcc,%xmm1,%xmm0,%xmm0
+	vpblendw $0xcc,%xmm2,%xmm1,%xmm2
+	vmovdqa %xmm4,0x140(%rdi)
+	vmovdqa %xmm3,0x150(%rdi)
+	vmovdqa %xmm2,0x160(%rdi)
+	vmovdqa %xmm0,0x170(%rdi)
 	
-	scrypt_shuffle %rsp, 0, %rdi, 0
-	scrypt_shuffle %rsp, 64, %rdi, 64
-	scrypt_shuffle %rsp, 128, %rdi, 128
-	scrypt_shuffle %rsp, 192, %rdi, 192
-	scrypt_shuffle %rsp, 256, %rdi, 256
-	scrypt_shuffle %rsp, 320, %rdi, 320
+//	scrypt_shuffle %rsp, 0, %rdi, 0
+//	scrypt_shuffle %rsp, 64, %rdi, 64
+//	scrypt_shuffle %rsp, 128, %rdi, 128
+//	scrypt_shuffle %rsp, 192, %rdi, 192
+//	scrypt_shuffle %rsp, 256, %rdi, 256
+//	scrypt_shuffle %rsp, 320, %rdi, 320
 	
 	scrypt_core_3way_cleanup
 	ret
