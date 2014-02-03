@@ -627,6 +627,12 @@ static void scrypt_1024_1_1_256_12way(const uint32_t *input,
 		for (i = 0; i < 32; i++)
 			for (k = 0; k < 4; k++)
 				X[128 * j + k * 32 + i] = W[128 * j + 4 * i + k];
+
+//	scrypt_core_sidm_3way(X+0*96);
+//	scrypt_core_sidm_3way(X+1*96);
+//	scrypt_core_sidm_3way(X+2*96);
+//	scrypt_core_sidm_3way(X+3*96);
+
 	scrypt_core_3way(X + 0 * 96, V);
 	scrypt_core_3way(X + 1 * 96, V);
 	scrypt_core_3way(X + 2 * 96, V);
