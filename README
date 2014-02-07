@@ -1,6 +1,22 @@
 This is a multi-threaded CPU miner for Vertcoin,
 fork of Jeff Garzik's reference cpuminer.
 
+------------------------------***********-----------------------------------
+SIDM version.
+The assembly code is back ported to C code using the IMM instruction set
+Dynamic Nfactor adaptation done for salsa 3way version.
+Todo:
+	Get the Nfactor from the JSON request??
+	Find out why this C code just doesn't compile to the same speed as
+	the assembly code.
+	Need to get better speed optimized solution, 
+		or port the Nfactor adapatation to the ASM instructions 
+
+	SIDM code is currently not activated, due to 20% speed reduction.
+	
+------------------------------***********-----------------------------------
+
+
 License: GPLv2.  See COPYING for details.
 
 Downloads:  https://sourceforge.net/projects/cpuminer/files/
