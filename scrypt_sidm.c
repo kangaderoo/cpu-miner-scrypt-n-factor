@@ -447,11 +447,11 @@ static inline void xor_salsa_sidm_3way(__m128i *calc_11, __m128i *calc_21, __m12
 }
 
 
-static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
+static inline void scrypt_core_sidm_3way(uint32_t *X, uint32_t NFactor /*, uint32_t *V*/)
 {
 	uint32_t i, j;
+	uint32_t N;
 
-	__m128i scratch[2048 * 8 * 3];
 	__m128i *SourcePtr = (__m128i*) X;
 	__m128i X11[4];
 	__m128i X12[4];
@@ -459,6 +459,7 @@ static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
 	__m128i X22[4];
 	__m128i X31[4];
 	__m128i X32[4];
+	__m128i *scratch;
 
 	__m128i *calc_11 = (__m128i*) X11;
 	__m128i *calc_21 = (__m128i*) X21;
@@ -470,76 +471,89 @@ static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
 	__m128i _calc5;
 	__m128i _calc6;
 	__m128i _calc7;
-	__m128i _calc8;
+//	__m128i _calc8;
+
+	N = 1 << ( NFactor + 1);
+	scratch = malloc(N * 3 * 8 * sizeof(__m128i));
+    N = N - 1;
 
 	// working with multiple pointers for the scratch-pad results in minimized instruction count.
-    __m128i *scratchPrt1 = &scratch[0];
-    __m128i *scratchPrt2 = &scratch[1];
-    __m128i *scratchPrt3 = &scratch[2];
-    __m128i *scratchPrt4 = &scratch[3];
-    __m128i *scratchPrt5 = &scratch[4];
-    __m128i *scratchPrt6 = &scratch[5];
-    __m128i *scratchPrt7 = &scratch[6];
-    __m128i *scratchPrt8 = &scratch[7];
+//    __m128i *scratchPrt1 = &scratch[0];
+//    __m128i *scratchPrt2 = &scratch[1];
+//    __m128i *scratchPrt3 = &scratch[2];
+//    __m128i *scratchPrt4 = &scratch[3];
+//    __m128i *scratchPrt5 = &scratch[4];
+//    __m128i *scratchPrt6 = &scratch[5];
+//    __m128i *scratchPrt7 = &scratch[6];
+//    __m128i *scratchPrt8 = &scratch[7];
+
+    __m128i *scratchPrt1 = scratch;
+    __m128i *scratchPrt2 = scratch+1;
+    __m128i *scratchPrt3 = scratch+2;
+    __m128i *scratchPrt4 = scratch+3;
+    __m128i *scratchPrt5 = scratch+4;
+    __m128i *scratchPrt6 = scratch+5;
+    __m128i *scratchPrt7 = scratch+6;
+    __m128i *scratchPrt8 = scratch+7;
 
 	/* transpose the data from *X1x */
 	_calc5 =_mm_blend_epi16(SourcePtr[0], SourcePtr[2], 0xf0);
 	_calc6 =_mm_blend_epi16(SourcePtr[1], SourcePtr[3], 0x0f);
-	_calc7 =_mm_blend_epi16(SourcePtr[2], SourcePtr[0], 0xf0);
-	_calc8 =_mm_blend_epi16(SourcePtr[3], SourcePtr[1], 0x0f);
-	calc_11[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	calc_11[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(SourcePtr[2], SourcePtr[0], 0xf0);
 	calc_11[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	calc_11[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(SourcePtr[3], SourcePtr[1], 0x0f);
+	calc_11[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	calc_11[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(SourcePtr[4], SourcePtr[6], 0xf0);
 	_calc6 =_mm_blend_epi16(SourcePtr[5], SourcePtr[7], 0x0f);
-	_calc7 =_mm_blend_epi16(SourcePtr[6], SourcePtr[4], 0xf0);
-	_calc8 =_mm_blend_epi16(SourcePtr[7], SourcePtr[5], 0x0f);
-	calc_12[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	calc_12[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(SourcePtr[6], SourcePtr[4], 0xf0);
 	calc_12[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	calc_12[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(SourcePtr[7], SourcePtr[5], 0x0f);
+	calc_12[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	calc_12[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	/* transpose the data from *X2x */
 	_calc5 =_mm_blend_epi16(SourcePtr[8], SourcePtr[10], 0xf0);
 	_calc6 =_mm_blend_epi16(SourcePtr[9], SourcePtr[11], 0x0f);
-	_calc7 =_mm_blend_epi16(SourcePtr[10], SourcePtr[8], 0xf0);
-	_calc8 =_mm_blend_epi16(SourcePtr[11], SourcePtr[9], 0x0f);
-	calc_21[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	calc_21[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(SourcePtr[10], SourcePtr[8], 0xf0);
 	calc_21[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	calc_21[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(SourcePtr[11], SourcePtr[9], 0x0f);
+	calc_21[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	calc_21[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(SourcePtr[12], SourcePtr[14], 0xf0);
 	_calc6 =_mm_blend_epi16(SourcePtr[13], SourcePtr[15], 0x0f);
-	_calc7 =_mm_blend_epi16(SourcePtr[14], SourcePtr[12], 0xf0);
-	_calc8 =_mm_blend_epi16(SourcePtr[15], SourcePtr[13], 0x0f);
-	calc_22[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	calc_22[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(SourcePtr[14], SourcePtr[12], 0xf0);
 	calc_22[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	calc_22[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(SourcePtr[15], SourcePtr[13], 0x0f);
+	calc_22[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	calc_22[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	/* transpose the data from *X3x */
 	_calc5 =_mm_blend_epi16(SourcePtr[16], SourcePtr[18], 0xf0);
 	_calc6 =_mm_blend_epi16(SourcePtr[17], SourcePtr[19], 0x0f);
-	_calc7 =_mm_blend_epi16(SourcePtr[18], SourcePtr[16], 0xf0);
-	_calc8 =_mm_blend_epi16(SourcePtr[19], SourcePtr[17], 0x0f);
-	calc_31[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	calc_31[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(SourcePtr[18], SourcePtr[16], 0xf0);
 	calc_31[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	calc_31[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(SourcePtr[19], SourcePtr[17], 0x0f);
+	calc_31[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	calc_31[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(SourcePtr[20], SourcePtr[22], 0xf0);
 	_calc6 =_mm_blend_epi16(SourcePtr[21], SourcePtr[23], 0x0f);
-	_calc7 =_mm_blend_epi16(SourcePtr[22], SourcePtr[20], 0xf0);
-	_calc8 =_mm_blend_epi16(SourcePtr[23], SourcePtr[21], 0x0f);
-	calc_32[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	calc_32[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(SourcePtr[22], SourcePtr[20], 0xf0);
 	calc_32[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	calc_32[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(SourcePtr[23], SourcePtr[21], 0x0f);
+	calc_32[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	calc_32[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
-	for (i = 0; i < 2048; i++) {
+	for (i = 0; i <= N; i++) {
 		for (j=0; j<4; j++){
 			scratch[i * 24 +  0 + j] = calc_11[j];
 			scratch[i * 24 +  4 + j] = calc_12[j];
@@ -582,8 +596,8 @@ static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
 
 		xor_salsa_sidm_3way(calc_12, calc_22, calc_32);
 	}
-	for (i = 0; i < 2048; i++) {
-		j = 24 * (_mm_extract_epi16(calc_12[0],0x00) & 2047);
+	for (i = 0; i <= N; i++) {
+		j = 24 * (_mm_extract_epi16(calc_12[0],0x00) & N);
 
 		calc_11[0] ^=  scratchPrt1[j];
 		calc_11[1] ^=  scratchPrt2[j];
@@ -594,7 +608,7 @@ static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
 		calc_12[2] ^=  scratchPrt7[j];
 		calc_12[3] ^=  scratchPrt8[j];
 
-		j = 8 + 24 * (_mm_extract_epi16(calc_22[0],0x00) & 2047);
+		j = 8 + 24 * (_mm_extract_epi16(calc_22[0],0x00) & N);
 
 		calc_21[0] ^=  scratchPrt1[j];
 		calc_21[1] ^=  scratchPrt2[j];
@@ -605,7 +619,7 @@ static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
 		calc_22[2] ^=  scratchPrt7[j];
 		calc_22[3] ^=  scratchPrt8[j];
 
-		j = 16 + 24 * (_mm_extract_epi16(calc_32[0],0x00) & 2047);
+		j = 16 + 24 * (_mm_extract_epi16(calc_32[0],0x00) & N);
 
 		calc_31[0] ^=  scratchPrt1[j];
 		calc_31[1] ^=  scratchPrt2[j];
@@ -653,56 +667,58 @@ static inline void scrypt_core_sidm_3way(uint32_t *X /*, uint32_t *V*/)
 // return the valueś to X
 	_calc5 =_mm_blend_epi16(calc_11[0], calc_11[2], 0xf0);
 	_calc6 =_mm_blend_epi16(calc_11[1], calc_11[3], 0x0f);
-	_calc7 =_mm_blend_epi16(calc_11[2], calc_11[0], 0xf0);
-	_calc8 =_mm_blend_epi16(calc_11[3], calc_11[1], 0x0f);
-	SourcePtr[0] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	SourcePtr[1] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(calc_11[2], calc_11[0], 0xf0);
 	SourcePtr[2] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	SourcePtr[3] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(calc_11[3], calc_11[1], 0x0f);
+	SourcePtr[0] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	SourcePtr[3] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(calc_12[0], calc_12[2], 0xf0);
 	_calc6 =_mm_blend_epi16(calc_12[1], calc_12[3], 0x0f);
-	_calc7 =_mm_blend_epi16(calc_12[2], calc_12[0], 0xf0);
-	_calc8 =_mm_blend_epi16(calc_12[3], calc_12[1], 0x0f);
-	SourcePtr[4] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	SourcePtr[5] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(calc_12[2], calc_12[0], 0xf0);
 	SourcePtr[6] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	SourcePtr[7] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(calc_12[3], calc_12[1], 0x0f);
+	SourcePtr[4] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	SourcePtr[7] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(calc_21[0], calc_21[2], 0xf0);
 	_calc6 =_mm_blend_epi16(calc_21[1], calc_21[3], 0x0f);
-	_calc7 =_mm_blend_epi16(calc_21[2], calc_21[0], 0xf0);
-	_calc8 =_mm_blend_epi16(calc_21[3], calc_21[1], 0x0f);
-	SourcePtr[8] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	SourcePtr[9] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(calc_21[2], calc_21[0], 0xf0);
 	SourcePtr[10] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	SourcePtr[11] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(calc_21[3], calc_21[1], 0x0f);
+	SourcePtr[8] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	SourcePtr[11] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(calc_22[0], calc_22[2], 0xf0);
 	_calc6 =_mm_blend_epi16(calc_22[1], calc_22[3], 0x0f);
-	_calc7 =_mm_blend_epi16(calc_22[2], calc_22[0], 0xf0);
-	_calc8 =_mm_blend_epi16(calc_22[3], calc_22[1], 0x0f);
-	SourcePtr[12] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	SourcePtr[13] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(calc_22[2], calc_22[0], 0xf0);
 	SourcePtr[14] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	SourcePtr[15] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(calc_22[3], calc_22[1], 0x0f);
+	SourcePtr[12] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	SourcePtr[15] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(calc_31[0], calc_31[2], 0xf0);
 	_calc6 =_mm_blend_epi16(calc_31[1], calc_31[3], 0x0f);
-	_calc7 =_mm_blend_epi16(calc_31[2], calc_31[0], 0xf0);
-	_calc8 =_mm_blend_epi16(calc_31[3], calc_31[1], 0x0f);
-	SourcePtr[16] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	SourcePtr[17] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(calc_31[2], calc_31[0], 0xf0);
 	SourcePtr[18] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	SourcePtr[19] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(calc_31[3], calc_31[1], 0x0f);
+	SourcePtr[16] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	SourcePtr[19] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
 
 	_calc5 =_mm_blend_epi16(calc_32[0], calc_32[2], 0xf0);
 	_calc6 =_mm_blend_epi16(calc_32[1], calc_32[3], 0x0f);
-	_calc7 =_mm_blend_epi16(calc_32[2], calc_32[0], 0xf0);
-	_calc8 =_mm_blend_epi16(calc_32[3], calc_32[1], 0x0f);
-	SourcePtr[20] = _mm_blend_epi16(_calc5, _calc8, 0xcc);
 	SourcePtr[21] = _mm_blend_epi16(_calc6, _calc5, 0xcc);
+	_calc7 =_mm_blend_epi16(calc_32[2], calc_32[0], 0xf0);
 	SourcePtr[22] = _mm_blend_epi16(_calc7, _calc6, 0xcc);
-	SourcePtr[23] = _mm_blend_epi16(_calc8, _calc7, 0xcc);
+	_calc6 =_mm_blend_epi16(calc_32[3], calc_32[1], 0x0f);
+	SourcePtr[20] = _mm_blend_epi16(_calc5, _calc6, 0xcc);
+	SourcePtr[23] = _mm_blend_epi16(_calc6, _calc7, 0xcc);
+
+	free (scratch);
 }
 

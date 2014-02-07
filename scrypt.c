@@ -606,6 +606,7 @@ static void scrypt_1024_1_1_256_12way(const uint32_t *input,
 	uint32_t X[12 * 32] __attribute__((aligned(128)));
 	uint32_t *V;
 	int i, j, k;
+	int Nfactor;
 	
 	V = (uint32_t *)(((uintptr_t)(scratchpad) + 63) & ~ (uintptr_t)(63));
 
@@ -628,15 +629,18 @@ static void scrypt_1024_1_1_256_12way(const uint32_t *input,
 			for (k = 0; k < 4; k++)
 				X[128 * j + k * 32 + i] = W[128 * j + 4 * i + k];
 
-//	scrypt_core_sidm_3way(X+0*96);
-//	scrypt_core_sidm_3way(X+1*96);
-//	scrypt_core_sidm_3way(X+2*96);
-//	scrypt_core_sidm_3way(X+3*96);
+//  need to get the Nfactor from the pool server.
+//	Nfactor = 10;
+//	scrypt_core_sidm_3way(X+0*96, Nfactor);
+//	scrypt_core_sidm_3way(X+1*96, Nfactor);
+//	scrypt_core_sidm_3way(X+2*96, Nfactor);
+//	scrypt_core_sidm_3way(X+3*96, Nfactor);
 
 	scrypt_core_3way(X + 0 * 96, V);
 	scrypt_core_3way(X + 1 * 96, V);
 	scrypt_core_3way(X + 2 * 96, V);
 	scrypt_core_3way(X + 3 * 96, V);
+
 	for (j = 0; j < 3; j++)
 		for (i = 0; i < 32; i++)
 			for (k = 0; k < 4; k++)
